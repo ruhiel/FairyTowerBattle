@@ -1,0 +1,7 @@
+#canvas-container{
+	width: 640px;
+	margin: 30px auto;
+}
+#canvas-container canvas{
+	background: url(../images/texture.png) repeat !important;
+}
