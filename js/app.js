@@ -49,6 +49,8 @@
     World.add(_world, [_ball]);
 
     BALL.addEvent();
+
+    BALL.tickEvent();
   };
 
 
@@ -84,7 +86,7 @@
     var y = (e)? e.mouse.position.y : 100;
 
     var ball = Bodies.circle(x, y, 50, {
-      isStatic: false, // true -> ボールを固定
+      isStatic: true, // true -> ボールを固定
       //バウンドさせたい場合はrestitutionに任意の値を渡す
       restitution: 0.9,
       render: {fillStyle: '#d04030',sprite:{texture:'images/zako.png'}}
@@ -95,6 +97,7 @@
 
   BALL.addEvent = function() {
     Events.on(_engine, 'mousedown', function(e) {
+      Body.setStatic(_ball, false);
       _ball = BALL.create(e);
       World.add(_engine.world, [_ball]);
 
@@ -103,6 +106,12 @@
       button.addEventListener('click', function(e){
         Body.applyForce(_ball, { x: 0, y: 0 }, {x: 0.06, y: -0.05});
       });
+    });
+  };
+
+  BALL.tickEvent = function() {
+    Events.on(_engine, 'tick', function(e) {
+      Body.rotate(_ball, 0.05);
     });
   };
 
