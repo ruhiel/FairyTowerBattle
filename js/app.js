@@ -22,6 +22,8 @@
   var _engine = {};
   var _ball = {};
 
+  var roteteFlag = false;
+
   STAGE.init = function() {
     var opt = {
       positionIterations: 6,
@@ -39,20 +41,33 @@
 
     var mainStage = document.getElementById('stage');
     _engine = Engine.create(mainStage, opt);
-    var _world = _engine.world;
 
     //Engine 実行
     Engine.run(_engine);
     STAGE.reset();
 
-    _ball = BALL.create();
+    STAGE.addBall(300, 100);
+
+    var button = document.getElementById('button-firing');
+    
+    button.addEventListener('mousedown', function(e){
+      roteteFlag = true;
+    });
+
+    button.addEventListener('mouseup', function(e){
+      roteteFlag = false;
+    });
+  };
+
+  STAGE.addBall = function(x, y) {
+    var _world = _engine.world;
+    _ball = BALL.create(x, y);
     World.add(_world, [_ball]);
 
     BALL.addEvent();
 
     BALL.tickEvent();
   };
-
 
   STAGE.reset = function () {
     var _world = _engine.world;
@@ -81,10 +96,7 @@
   /**
   * BALL methods
   */
-  BALL.create = function(e) {
-    var x = (e)? e.mouse.position.x : 530;
-    var y = (e)? e.mouse.position.y : 100;
-
+  BALL.create = function(x, y) {
     var shape = {
       label: 'Shape Body',
       position: {
@@ -103,23 +115,28 @@
     return ball;
   };
 
+  var delayCount = 0;
+  
   BALL.addEvent = function() {
     Events.on(_engine, 'mousedown', function(e) {
       Body.setStatic(_ball, false);
-      _ball = BALL.create(e);
-      World.add(_engine.world, [_ball]);
-
-      var button = document.getElementById('button-firing');
-
-      button.addEventListener('click', function(e){
-        Body.applyForce(_ball, { x: 0, y: 0 }, {x: 0.06, y: -0.05});
-      });
+      delayCount = 30;
+      //_ball = BALL.create(e);
+      //World.add(_engine.world, [_ball]);
     });
   };
 
   BALL.tickEvent = function() {
     Events.on(_engine, 'tick', function(e) {
-      Body.rotate(_ball, 0.05);
+      if(roteteFlag){
+        Body.rotate(_ball, 0.05);
+      }
+      if(delayCount > 0) {
+        delayCount--;
+      }
+      if(!Body.getStatic(_ball) && Body.isStop(_ball) && delayCount == 0){
+        STAGE.addBall(300, 100);
+      }
     });
   };
 

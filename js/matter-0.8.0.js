@@ -358,6 +358,18 @@ var Body = {};
         Bounds.update(body.bounds, body.vertices, body.velocity);
     };
 
+    Body.getVelocity = function(body) {
+        return body.velocity;
+    };
+
+    Body.isStop = function(body) {
+        return Math.abs(body.velocity.x) < 1.00e-12 && Math.abs(body.velocity.y) < 1.00e-12
+    };
+
+    Body.getStatic = function(body) {
+        return body.isStatic;
+    };
+
 })();
 
 ;   // End src/body/Body.js
