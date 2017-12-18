@@ -22,6 +22,7 @@
   var _engine = {};
   var _ball = {};
 
+  var delayCount = 0;
   var roteteFlag = false;
 
   STAGE.init = function() {
@@ -57,16 +58,31 @@
     button.addEventListener('mouseup', function(e){
       roteteFlag = false;
     });
+    
+    Events.on(_engine, 'mousedown', function(e) {
+      Body.setStatic(_ball, false);
+      delayCount = 30;
+      //_ball = BALL.create(e);
+      //World.add(_engine.world, [_ball]);
+    });
+
+    Events.on(_engine, 'tick', function(e) {
+      if(roteteFlag){
+        Body.rotate(_ball, 0.05);
+      }
+      if(delayCount > 0) {
+        delayCount--;
+      }
+      if(!Body.getStatic(_ball) && Body.isStop(_ball) && delayCount == 0){
+        STAGE.addBall(300, 100);
+      }
+    });
   };
 
   STAGE.addBall = function(x, y) {
     var _world = _engine.world;
     _ball = BALL.create(x, y);
     World.add(_world, [_ball]);
-
-    BALL.addEvent();
-
-    BALL.tickEvent();
   };
 
   STAGE.reset = function () {
@@ -114,32 +130,6 @@
 
     return ball;
   };
-
-  var delayCount = 0;
-  
-  BALL.addEvent = function() {
-    Events.on(_engine, 'mousedown', function(e) {
-      Body.setStatic(_ball, false);
-      delayCount = 30;
-      //_ball = BALL.create(e);
-      //World.add(_engine.world, [_ball]);
-    });
-  };
-
-  BALL.tickEvent = function() {
-    Events.on(_engine, 'tick', function(e) {
-      if(roteteFlag){
-        Body.rotate(_ball, 0.05);
-      }
-      if(delayCount > 0) {
-        delayCount--;
-      }
-      if(!Body.getStatic(_ball) && Body.isStop(_ball) && delayCount == 0){
-        STAGE.addBall(300, 100);
-      }
-    });
-  };
-
   // 初期化
   STAGE.init();
 })();
