@@ -85,12 +85,20 @@
     var x = (e)? e.mouse.position.x : 530;
     var y = (e)? e.mouse.position.y : 100;
 
-    var ball = Bodies.circle(x, y, 50, {
-      isStatic: true, // true -> ボールを固定
-      //バウンドさせたい場合はrestitutionに任意の値を渡す
-      restitution: 0.9,
-      render: {fillStyle: '#d04030',sprite:{texture:'images/zako.png'}}
-    });
+    var shape = {
+      label: 'Shape Body',
+      position: {
+          x: x,
+          y: y
+      },
+      isStatic: true,
+      vertices: Vertices.fromPath('L0 90 L86 0 L147 53 L76 149'), 
+      render: {
+          fillStyle: "#234",
+          sprite:{texture:'images/zako.png'}
+      }
+    };
+    var ball = Body.create(Common.extend({}, shape))
 
     return ball;
   };
