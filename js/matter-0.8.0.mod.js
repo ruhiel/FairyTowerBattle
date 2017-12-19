@@ -152,8 +152,8 @@ var Body = {};
      */
     Body.setStatic = function(body, isStatic) {
         body.isStatic = isStatic;
-
         if (isStatic) {
+            /*
             body.restitution = 0;
             body.friction = 1;
             body.mass = body.inertia = body.density = Infinity;
@@ -166,7 +166,20 @@ var Body = {};
             body.angularVelocity = 0;
             body.speed = 0;
             body.angularSpeed = 0;
-            body.motion = 0;
+            body.motion = 0;*/
+            body.area = Vertices.area(body.vertices);
+            body.density = 0.001;
+            body.mass = Infinity;
+            body.inverseMass = 1 / body.mass;
+            body.friction = 0.1;
+            body.render.lineWidth = 1.5;
+        } else {
+            body.area = Vertices.area(body.vertices);
+            body.density = 0.001;
+            body.mass = body.density * body.area;
+            body.inverseMass = 1 / body.mass;
+            body.friction = 0.1;
+            body.render.lineWidth = 1.5;
         }
     };
 
@@ -343,6 +356,18 @@ var Body = {};
 
         // update bounds
         Bounds.update(body.bounds, body.vertices, body.velocity);
+    };
+
+    Body.getVelocity = function(body) {
+        return body.velocity;
+    };
+
+    Body.isStop = function(body) {
+        return Math.abs(body.velocity.x) < 1.00e-8 && Math.abs(body.velocity.y) < 1.00e-8
+    };
+
+    Body.getStatic = function(body) {
+        return body.isStatic;
     };
 
 })();

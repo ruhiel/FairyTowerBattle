@@ -21,9 +21,12 @@
   var BALL = {};
   var _engine = {};
   var _ball = {};
-
+  var _balls = [];
   var delayCount = 0;
   var roteteFlag = false;
+  var mouseX = -1;
+  var moveFlag = false;
+  var movePhase = true;
 
   STAGE.init = function() {
     var opt = {
@@ -43,13 +46,32 @@
     var mainStage = document.getElementById('stage');
     _engine = Engine.create(mainStage, opt);
 
+    var mouseConstraint = MouseConstraint.create(_engine);
+    World.add(_engine.world, mouseConstraint);
+    
+    Events.on(mouseConstraint, 'startdrag', function(e) {
+      moveFlag = true;
+    });
+
+    Events.on(mouseConstraint, 'enddrag', function(e) {
+      moveFlag = false;
+    });
+
+    Events.on(mouseConstraint, 'mousemove', function(e) {
+      var moveX = e.mouse.position.x - mouseX;
+      if(mouseX != -1 && moveFlag && movePhase) {
+        Body.movePosition(_ball, {x: moveX, y:0});        
+      }
+      mouseX = e.mouse.position.x;
+    });
+
     //Engine 実行
     Engine.run(_engine);
     STAGE.reset();
 
     STAGE.addBall(300, 100);
 
-    var button = document.getElementById('button-firing');
+    var button = document.getElementById('button-rotate');
     
     button.addEventListener('mousedown', function(e){
       roteteFlag = true;
@@ -58,12 +80,13 @@
     button.addEventListener('mouseup', function(e){
       roteteFlag = false;
     });
-    
-    Events.on(_engine, 'mousedown', function(e) {
+
+    var button2 = document.getElementById('button-firing');
+
+    button2.addEventListener('click', function(e){
       Body.setStatic(_ball, false);
       delayCount = 30;
-      //_ball = BALL.create(e);
-      //World.add(_engine.world, [_ball]);
+      movePhase = false;
     });
 
     Events.on(_engine, 'tick', function(e) {
@@ -73,8 +96,17 @@
       if(delayCount > 0) {
         delayCount--;
       }
-      if(!Body.getStatic(_ball) && Body.isStop(_ball) && delayCount == 0){
-        STAGE.addBall(300, 100);
+      if(!Body.getStatic(_ball) && delayCount == 0){
+        var isEnd = true;
+        for(let i = 0; i < _balls.length; i++) {
+          if(!Body.isStop(_balls[i])){
+            isEnd = false;
+            break;
+          }
+        }
+        if(isEnd){
+          STAGE.addBall(300, 100);
+        }
       }
     });
   };
@@ -83,6 +115,8 @@
     var _world = _engine.world;
     _ball = BALL.create(x, y);
     World.add(_world, [_ball]);
+    _balls.push(_ball);
+    movePhase = true;
   };
 
   STAGE.reset = function () {
