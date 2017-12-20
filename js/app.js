@@ -136,7 +136,7 @@
         //Bodies.rectangle(400, 0, 800, 1, {isStatic: true}),
         //Bodies.rectangle(800, 300, 1, 600, {isStatic: true}),
         //Bodies.rectangle(0, 0, 1, 600, {isStatic: true}),
-        Bodies.rectangle(400, 400, 400, 1, {isStatic: true})
+        Bodies.rectangle(400, 400, 400, 1, {isStatic: true, friction : 2})
     ]);
     //renderのオプション(各種renderのオプション)
     var renderOptions = _engine.render.options;
@@ -154,11 +154,12 @@
           y: y
       },
       isStatic: true,
-      vertices: Vertices.fromPath('L0 90 L86 0 L147 53 L76 149'), 
+      vertices: Vertices.fromPath('L13 119 L32 109 L19 89 L18 75 L86 0 L147 53 L76 149 L52 130 L14 132'), 
       render: {
           fillStyle: "#234",
           sprite:{texture:'images/zako.png'}
-      }
+      },
+      friction : 2
     };
     var ball = Body.create(Common.extend({}, shape))
 

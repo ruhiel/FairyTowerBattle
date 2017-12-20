@@ -647,7 +647,7 @@ var Axes = require('../geometry/Axes');
     };
 
     Body.isStop = function(body) {
-        return Math.abs(body.velocity.x) < 1.00e-8 && Math.abs(body.velocity.y) < 1.00e-8
+        return Math.abs(body.velocity.x) < 1.00e-5 && Math.abs(body.velocity.y) < 1.00e-5
     };
 
     Body.getStatic = function(body) {
