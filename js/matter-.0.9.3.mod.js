@@ -283,6 +283,7 @@ var Axes = require('../geometry/Axes');
                 part.mass = Infinity;
                 part.inverseMass = 1 / body.mass;
                 part.friction = 0.1;
+                part.motion = 0;
             }else {
                 part.area = Vertices.area(body.vertices);
                 part.density = 0.001;
@@ -642,18 +643,10 @@ var Axes = require('../geometry/Axes');
         body.torque += offset.x * force.y - offset.y * force.x;
     };
 
-    Body.getVelocity = function(body) {
-        return body.velocity;
-    };
-
     Body.isStop = function(body) {
-        return Math.abs(body.velocity.x) < 1.00e-5 && Math.abs(body.velocity.y) < 1.00e-5
+        return Math.abs(body.velocity.x) < 1.00e-3 && Math.abs(body.velocity.y) < 1.00e-3
     };
-
-    Body.getStatic = function(body) {
-        return body.isStatic;
-    };
-    
+  
     /**
      * Returns the sums of the properties of all compound parts of the parent body.
      * @method _totalProperties

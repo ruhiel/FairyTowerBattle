@@ -36,7 +36,7 @@
       render: { //レンダリングの設定 
         options: { 
           wireframes: false, //ワイヤーフレームモードをoff 
-          width: 640, //canvasのwidth(横幅) 
+          width: 1024, //canvasのwidth(横幅) 
           height: 480, //canvasのheight(高さ) 
           background: 'rgba(0, 0, 0, 0)' 
         } 
@@ -69,8 +69,6 @@
     Engine.run(_engine);
     STAGE.reset();
 
-    STAGE.addBall(300, 100);
-
     var button = document.getElementById('button-rotate');
     
     button.addEventListener('mousedown', function(e){
@@ -90,13 +88,22 @@
     });
 
     Events.on(_engine, 'tick', function(e) {
-      if(roteteFlag){
+      if(roteteFlag && movePhase){
         Body.rotate(_ball, 0.05);
       }
       if(delayCount > 0) {
         delayCount--;
       }
-      if(!Body.getStatic(_ball) && delayCount == 0){
+      for(let i = 0; i < _balls.length; i++) {
+        
+        if(_balls[i].position.y > 2000) {
+          // 落下
+          alert("ゲームオーバー");
+          STAGE.reset();
+          break;
+        }
+      }
+      if(!_ball.isStatic && delayCount == 0){
         var isEnd = true;
         for(let i = 0; i < _balls.length; i++) {
           if(!Body.isStop(_balls[i])){
@@ -125,22 +132,24 @@
     //描画クリア
     World.clear(_world);
     Engine.clear(_engine);
+    
+    _balls = [];
 
     //重力値
     _engine.world.gravity.y = 1;
-
-    var offset = 0;
 
     //矩形で枠線を作る(rectangle(x座標,y座標,横幅,縦幅,option))
     World.add(_world, [
         //Bodies.rectangle(400, 0, 800, 1, {isStatic: true}),
         //Bodies.rectangle(800, 300, 1, 600, {isStatic: true}),
         //Bodies.rectangle(0, 0, 1, 600, {isStatic: true}),
-        Bodies.rectangle(400, 400, 400, 1, {isStatic: true, friction : 2})
+        Bodies.rectangle(500, 400, 600, 1, {isStatic: true, friction : 2, restitution : 0})
     ]);
     //renderのオプション(各種renderのオプション)
     var renderOptions = _engine.render.options;
     renderOptions.wireframes = false;
+
+    STAGE.addBall(300, 100);
   };
 
   /**
@@ -159,7 +168,8 @@
           fillStyle: "#234",
           sprite:{texture:'images/zako.png'}
       },
-      friction : 2
+      friction : 2,
+      restitution : 0
     };
     var ball = Body.create(Common.extend({}, shape))
 
